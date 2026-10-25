@@ -1,26 +1,205 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --savia: #24381c;
+  --hoja: #3e6b34;
+  --salvia: #dceccb;
+  --avena: #f4f1ea;
+  --madera: #c6a37a;
+  --fresa: #3e6b34;
+  --tinta: #1e2418;
+  --raiz-clara: #dceccb;
+  --header-h: 5rem;
+  --background: var(--avena);
+  --foreground: var(--tinta);
+  color-scheme: light;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@media (min-width: 1024px) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --header-h: 6rem;
   }
 }
 
+@theme inline {
+  --color-savia: var(--savia);
+  --color-hoja: var(--hoja);
+  --color-salvia: var(--salvia);
+  --color-avena: var(--avena);
+  --color-madera: var(--madera);
+  --color-fresa: var(--fresa);
+  --color-tinta: var(--tinta);
+  --color-raiz-clara: var(--raiz-clara);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-figtree), "Figtree", sans-serif;
+  --font-display: var(--font-young-serif), Georgia, serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--header-h);
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--avena);
+  color: var(--tinta);
+  font-family: var(--font-figtree), "Figtree", sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+}
+
+::selection {
+  background: var(--salvia);
+  color: var(--savia);
+}
+
+:focus-visible {
+  outline: 2px solid var(--hoja);
+  outline-offset: 3px;
+}
+
+.on-dark :focus-visible {
+  outline-color: var(--avena);
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+  z-index: 90;
+  transform: translateY(-160%);
+  border-radius: 999px;
+  background: var(--savia);
+  color: var(--avena);
+  padding: 0.75rem 1rem;
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+.hero-title {
+  font-family: var(--font-young-serif), Georgia, serif;
+  font-size: clamp(3rem, 5.6vw, 7.5rem);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 1.02;
+  max-width: 100%;
+  text-wrap: wrap;
+}
+
+.chapter-title {
+  font-family: var(--font-young-serif), Georgia, serif;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+.nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.arch {
+  border-radius: 1.25rem;
+  overflow: hidden;
+}
+
+.arch.photo-circle {
+  aspect-ratio: 1;
+  border-radius: 999px;
+  box-shadow: 0 0 0 6px #fff, 0 12px 28px rgba(36, 56, 28, 0.1);
+}
+
+.hero-bleed {
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 26%, #000 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 26%, #000 100%);
+}
+
+.hero-bleed-mobile {
+  -webkit-mask-image: linear-gradient(#000 58%, transparent 100%);
+  mask-image: linear-gradient(#000 58%, transparent 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .hero-line,
+  .sheet-in,
+  .sprout-leaf {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .hero-line {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-line {
+    animation: hero-line 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  .hero-line-2 {
+    animation-delay: 0.14s;
+  }
+
+  .sheet-in {
+    animation: sheet-in 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .sprout-leaf {
+    animation: sprout 0.7s ease both;
+    transform-origin: 20% 80%;
+  }
+}
+
+@keyframes hero-line {
+  from {
+    opacity: 0;
+    transform: translateY(0.35em);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes sheet-in {
+  from {
+    transform: translateY(105%);
+  }
+
+  to {
+    transform: none;
+  }
+}
+
+@keyframes sprout {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) rotate(-18deg);
+  }
+
+  45% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1) translateY(-4px);
+  }
+}
+
+@media (min-width: 768px) {
+  .sheet-in {
+    animation: none;
+  }
 }

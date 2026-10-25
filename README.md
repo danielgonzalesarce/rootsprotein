@@ -1,36 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Roots Protein Bar
 
-## Getting Started
+Sitio de Roots Protein Bar (Santa Anita). Next.js, sin backend: la carta vive en código y el pedido sale por WhatsApp.
 
-First, run the development server:
+## Comandos
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run build
+npm run lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Carta
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Edita `data/menu.ts`. No cambies un precio o un nombre si no está confirmado en la carta del local. Si un producto no tiene descripción ahí, no inventes una. La proteína y las calorías de la categoría se heredan; Post Entreno y Pink Protein traen las suyas.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Datos del local
 
-## Learn More
+Completa los campos vacíos de `data/site.ts`. Si un campo sigue vacío, la web lo oculta (pagos, reseñas, zonas de delivery, historia, referencia, coordenadas).
 
-To learn more about Next.js, take a look at the following resources:
+## Fotos
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Coloca las del local en `public/images/local/` y las de productos en `public/images/productos/`. Enlázalas en `data/images.ts` (hero, galería y foto por producto). La del hero va sin decoración de temporada. Falta también `public/og-image.jpg`, referenciada en los metadatos.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Variables de entorno
 
-## Deploy on Vercel
+Copia `.env.example`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `NEXT_PUBLIC_SITE_URL`: dominio final, sin barra al final. En local puede quedar `http://localhost:3000`.
+- `NEXT_PUBLIC_GA_ID`: ID de GA4. Si está vacío, no se carga analítica.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Vercel
+
+Importa el repositorio en Vercel. En el proyecto define `NEXT_PUBLIC_SITE_URL` con el dominio final y `NEXT_PUBLIC_GA_ID` si vas a medir. El framework es Next.js; el comando de build es `npm run build`.
