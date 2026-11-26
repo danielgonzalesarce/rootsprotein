@@ -9,7 +9,7 @@ type Claim = {
 };
 
 export function PorQueClaims({ points }: { points: Claim[] }) {
-  const ref = useRef<HTMLOlElement>(null);
+  const ref = useRef<HTMLOListElement>(null);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
