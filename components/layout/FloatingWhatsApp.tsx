@@ -8,8 +8,8 @@ import { cn } from "@/lib/cn";
 import { infoWhatsAppUrl } from "@/lib/whatsapp";
 import { useCartStore } from "@/store/cart";
 
-const VISIBLE_MS = 5200;
-const CYCLE_MS = 9000;
+const VISIBLE_MS = 4500;
+const CYCLE_MS = 15_000;
 
 export function FloatingWhatsApp() {
   const cartOpen = useCartStore((state) => state.isOpen);
