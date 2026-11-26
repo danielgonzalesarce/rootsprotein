@@ -6,13 +6,17 @@ import { track } from "@/lib/analytics";
 import { infoWhatsAppUrl } from "@/lib/whatsapp";
 import { useCartStore } from "@/store/cart";
 
-const PROMPT = "¿Listo para pedir? Escríbenos";
-const CYCLE_MS = 5000;
-const VISIBLE_MS = 3500;
+const PROMPTS = [
+  "¿Antojo de waffle o frappé? Te atendemos aquí.",
+  "Pide por WhatsApp · Santa Anita",
+];
+const CYCLE_MS = 6200;
+const VISIBLE_MS = 4200;
 
 export function FloatingWhatsApp() {
   const cartOpen = useCartStore((state) => state.isOpen);
   const [showPrompt, setShowPrompt] = useState(false);
+  const [promptIndex, setPromptIndex] = useState(0);
 
   useEffect(() => {
     if (cartOpen) {
@@ -26,11 +30,12 @@ export function FloatingWhatsApp() {
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const show = () => {
+      setPromptIndex((current) => (current + 1) % PROMPTS.length);
       setShowPrompt(true);
       hideTimer = setTimeout(() => setShowPrompt(false), preferReduce ? CYCLE_MS : VISIBLE_MS);
     };
 
-    const start = setTimeout(show, 1200);
+    const start = setTimeout(show, 1600);
     const interval = setInterval(show, CYCLE_MS);
 
     return () => {
@@ -42,22 +47,32 @@ export function FloatingWhatsApp() {
 
   if (cartOpen) return null;
 
+  const href = infoWhatsAppUrl();
+  const prompt = PROMPTS[promptIndex] ?? PROMPTS[0];
+
   return (
-    <div className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-[max(1rem,env(safe-area-inset-right))] z-30 flex flex-col items-end gap-2 sm:bottom-5 sm:right-5">
-      <div
-        className={`max-w-[11.5rem] origin-bottom-right rounded-2xl rounded-br-md bg-white px-3 py-2.5 text-xs leading-snug text-savia shadow-[0_12px_28px_rgba(26,42,22,0.18)] ring-1 ring-savia/8 transition-all duration-300 sm:max-w-[15rem] sm:px-4 sm:py-3 sm:text-sm ${
-          showPrompt ? "translate-y-0 scale-100 opacity-100" : "pointer-events-none translate-y-2 scale-95 opacity-0"
-        }`}
-        role="status"
-        aria-live="polite"
-      >
-        {PROMPT}
-      </div>
+    <div className="fixed bottom-[max(1.1rem,env(safe-area-inset-bottom))] right-[max(1rem,env(safe-area-inset-right))] z-30 flex flex-col items-end gap-2.5 sm:bottom-6 sm:right-6">
       <a
-        href={infoWhatsAppUrl()}
+        href={href}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="Escribir por WhatsApp"
+        className={`max-w-[13.5rem] origin-bottom-right rounded-[1.15rem] rounded-br-md bg-avena px-3.5 py-2.5 text-left text-[0.8rem] leading-snug text-savia shadow-[0_14px_32px_rgba(26,42,22,0.22)] ring-1 ring-savia/10 transition-all duration-300 sm:max-w-[16rem] sm:px-4 sm:py-3 sm:text-[0.88rem] ${
+          showPrompt
+            ? "translate-y-0 scale-100 opacity-100"
+            : "pointer-events-none translate-y-2 scale-95 opacity-0"
+        }`}
+        onClick={() => track("click_whatsapp")}
+      >
+        <span className="block text-[0.62rem] font-medium uppercase tracking-[0.14em] text-hoja">
+          WhatsApp
+        </span>
+        <span className="mt-1 block">{prompt}</span>
+      </a>
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Pedir por WhatsApp"
         className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_12px_28px_rgba(37,211,102,0.4)] transition-transform hover:scale-105 sm:h-14 sm:w-14"
         onClick={() => track("click_whatsapp")}
       >

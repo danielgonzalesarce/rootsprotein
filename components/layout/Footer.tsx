@@ -28,7 +28,7 @@ export function Footer() {
         className="pointer-events-none absolute -right-16 bottom-0 h-40 w-40 rounded-full bg-avena/10 blur-3xl"
       />
 
-      <div className="relative mx-auto w-full max-w-[1400px] px-4 py-8 sm:px-6 md:px-8 md:py-9 lg:px-10">
+      <div className="relative mx-auto w-full max-w-[1400px] px-4 py-8 pb-24 sm:px-6 sm:pb-10 md:px-8 md:py-9 lg:px-10">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
           <div className="min-w-0">
             <Logo tone="avena" imageClassName="!h-10 sm:!h-11" />
