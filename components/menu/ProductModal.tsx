@@ -86,7 +86,7 @@ function ProductDialog({ productId, onClose }: { productId: string; onClose: () 
         aria-modal="true"
         aria-labelledby="producto-titulo"
         tabIndex={-1}
-        className="sheet-in relative flex max-h-[92svh] w-full flex-col overflow-hidden bg-avena text-tinta outline-none shadow-[0_28px_80px_-28px_rgba(26,42,22,0.65)] md:max-w-lg md:rounded-[1.75rem]"
+        className="sheet-in relative z-10 flex max-h-[92svh] w-full flex-col overflow-hidden bg-avena text-tinta outline-none shadow-[0_28px_80px_-28px_rgba(26,42,22,0.65)] md:max-w-lg md:rounded-[1.75rem]"
       >
         <div className="relative shrink-0">
           <ProductVisual
@@ -99,14 +99,14 @@ function ProductDialog({ productId, onClose }: { productId: string; onClose: () 
 
           <button
             type="button"
-            className="absolute right-3 top-3 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full bg-avena/95 text-savia shadow-sm transition hover:bg-white"
+            className="absolute right-3 top-3 z-20 inline-flex h-11 w-11 items-center justify-center rounded-full bg-avena/95 text-savia shadow-sm transition hover:bg-white"
             aria-label="Cerrar"
             onClick={onClose}
           >
             <X aria-hidden="true" strokeWidth={1.5} />
           </button>
 
-          <div className="absolute inset-x-0 bottom-0 z-10 px-5 pb-5 pt-16">
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 px-5 pb-5 pt-16">
             {category ? (
               <p className="text-[0.7rem] font-medium uppercase tracking-[0.16em] text-salvia/85">
                 {product.subcategory ?? category.name}
