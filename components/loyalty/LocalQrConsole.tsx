@@ -6,7 +6,8 @@ import type { QrKind } from "@/lib/loyalty/tokens";
 type QrPayload = {
   kind: QrKind;
   url: string;
-  expiresAt: string;
+  expiresAt: string | null;
+  forever?: boolean;
   qrDataUrl: string;
 };
 
@@ -18,14 +19,14 @@ export function LocalQrConsole() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const loadQr = async (nextKind: QrKind, pass = password) => {
+  const loadQr = async (nextKind: QrKind, pass = password, forever = false) => {
     setLoading(true);
     setError("");
     try {
       const response = await fetch("/api/loyalty/local-qr", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password: pass, kind: nextKind }),
+        body: JSON.stringify({ password: pass, kind: nextKind, forever }),
       });
       const data = (await response.json()) as QrPayload & { error?: string };
       if (!response.ok) {
@@ -39,6 +40,7 @@ export function LocalQrConsole() {
         kind: data.kind,
         url: data.url,
         expiresAt: data.expiresAt,
+        forever: data.forever,
         qrDataUrl: data.qrDataUrl,
       });
     } catch {
@@ -49,7 +51,7 @@ export function LocalQrConsole() {
   };
 
   useEffect(() => {
-    if (!unlocked || !qr) return;
+    if (!unlocked || !qr || qr.forever || !qr.expiresAt) return;
     const expires = new Date(qr.expiresAt).getTime();
     const wait = Math.max(5_000, expires - Date.now() - 5_000);
     const timer = window.setTimeout(() => {
@@ -57,7 +59,7 @@ export function LocalQrConsole() {
     }, wait);
     return () => window.clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [unlocked, qr?.expiresAt, kind]);
+  }, [unlocked, qr?.expiresAt, qr?.forever, kind]);
 
   if (!unlocked) {
     return (
@@ -127,23 +129,36 @@ export function LocalQrConsole() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={qr.qrDataUrl} alt="Código QR del local" className="mx-auto h-auto w-full max-w-[22rem]" />
           <p className="mt-5 text-sm text-tinta/45">
-            Vence{" "}
-            {new Date(qr.expiresAt).toLocaleTimeString("es-PE", {
-              hour: "numeric",
-              minute: "2-digit",
-            })}
+            {qr.forever || !qr.expiresAt
+              ? "Sin caducidad · listo para imprimir"
+              : `Vence ${new Date(qr.expiresAt).toLocaleTimeString("es-PE", {
+                  hour: "numeric",
+                  minute: "2-digit",
+                })}`}
           </p>
         </div>
       ) : null}
 
-      <button
-        type="button"
-        onClick={() => void loadQr(kind)}
-        disabled={loading}
-        className="mt-7 text-sm text-savia underline underline-offset-4 disabled:opacity-60"
-      >
-        {loading ? "Renovando…" : "Renovar ahora"}
-      </button>
+      <div className="mt-7 flex flex-col items-center gap-3">
+        {kind === "stamp" ? (
+          <button
+            type="button"
+            onClick={() => void loadQr("stamp", password, true)}
+            disabled={loading}
+            className="text-sm font-medium text-hoja underline underline-offset-4 disabled:opacity-60"
+          >
+            {loading ? "Generando…" : "QR para imprimir (sin caducidad)"}
+          </button>
+        ) : null}
+        <button
+          type="button"
+          onClick={() => void loadQr(kind, password, false)}
+          disabled={loading}
+          className="text-sm text-savia underline underline-offset-4 disabled:opacity-60"
+        >
+          {loading ? "Renovando…" : qr?.forever ? "Volver a QR con caducidad" : "Renovar ahora"}
+        </button>
+      </div>
       {error ? (
         <p className="mt-3 text-[0.9375rem] font-medium text-savia" role="alert">
           {error}

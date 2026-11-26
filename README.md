@@ -30,6 +30,7 @@ Copia `.env.example` → `.env.local` (este archivo **no** se sube a Git).
 - `NEXT_PUBLIC_GA_ID`: ID de GA4. Si está vacío, no se carga analítica.
 - `LOYALTY_SECRET` / `LOYALTY_QR_SECRET`: claves largas (≥16) para sesión y QR. **Obligatorias en producción.**
 - `LOCAL_QR_PASSWORD`: clave fuerte de `/local/qr`. **Obligatoria en producción.**
+- `LOYALTY_STATIC_STAMP_TOKEN` (opcional): token fijo ≥16 chars para un QR de sello **sin caducidad** (imprimible). Si lo usas, debe coincidir en local y Vercel.
 - `DATABASE_URL`: connection string de Neon. Si falta, en local se usa `.data/loyalty.json`.
 
 ## Seguridad
@@ -41,9 +42,10 @@ Copia `.env.example` → `.env.local` (este archivo **no** se sube a Git).
 ## Raíces Roots (sellos)
 
 1. Cliente: `/cuenta` — registro con WhatsApp + PIN y ver sellos.
-2. Local: `/local/qr` — mostrar QR de sello o de canje (se renueva cada 15 min).
-3. Escaneos: `/sello` y `/canje`.
+2. Local: `/local/qr` — mostrar QR de sello o de canje (se renueva cada 15 min). También hay “QR para imprimir (sin caducidad)” solo para sellos.
+3. Escaneos: `/sello` y `/canje`. El sello fijo usa `LOYALTY_STATIC_STAMP_TOKEN` o un token firmado `forever`.
 4. Base de datos: el proyecto está linkeado con Neon (`neon.ts` + `.neon`). Corre `neon deploy` para refrescar env vars y `node --env-file=.env.local scripts/migrate-loyalty.mjs` para crear las tablas.
+5. QR imprimible de prueba: `node scripts/gen-stamp-qr.mjs` → `public/qr-sello-print.png` + valor a pegar en Vercel (ver `.secrets/static-stamp-token.txt`).
 
 ## Vercel
 
