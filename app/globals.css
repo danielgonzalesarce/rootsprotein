@@ -125,6 +125,7 @@ body {
 
   .hero-line,
   .hero-float,
+  .menu-link-in,
   .sheet-in,
   .sprout-leaf,
   .stamp-root-pop,
@@ -168,6 +169,11 @@ body {
 
   .sheet-in {
     animation: sheet-in 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .menu-link-in {
+    animation: menu-link-in 0.5s cubic-bezier(0.2, 0.75, 0.2, 1) both;
+    animation-delay: calc(0.08s + var(--menu-i, 0) * 0.05s);
   }
 
   .sprout-leaf {
@@ -279,6 +285,18 @@ body {
   }
 
   to {
+    transform: none;
+  }
+}
+
+@keyframes menu-link-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.65rem);
+  }
+
+  to {
+    opacity: 1;
     transform: none;
   }
 }
