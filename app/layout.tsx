@@ -27,13 +27,23 @@ const figtree = Figtree({
 export const metadata: Metadata = {
   metadataBase: new URL(site.siteUrl),
   ...homeMetadata,
+  applicationName: site.name,
+  authors: [{ name: site.name }],
+  creator: site.name,
+  publisher: site.name,
+  category: "food",
+  classification: "Protein bar, cafetería saludable",
+  other: {
+    "geo.region": "PE-LIM",
+    "geo.placename": "Santa Anita, Lima",
+  },
 };
 
 const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="es" className={`${youngSerif.variable} ${figtree.variable} h-full antialiased`}>
+    <html lang="es" data-scroll-behavior="smooth" className={`${youngSerif.variable} ${figtree.variable} h-full antialiased`}>
       <body className="min-h-full bg-avena font-sans text-tinta">
         <a className="skip-link" href="#contenido">
           Saltar al contenido

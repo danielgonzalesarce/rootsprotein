@@ -7,5 +7,5 @@ export function mapEmbedUrl(): string {
 }
 
 export function directionsUrl(): string {
-  return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(query)}`;
+  return site.mapsUrl;
 }

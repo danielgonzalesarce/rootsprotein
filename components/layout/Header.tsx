@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Menu, Search, ShoppingBag, X } from "lucide-react";
+import { Menu, ShoppingBag, X } from "lucide-react";
 import { InstagramGlyph } from "@/components/icons/InstagramGlyph";
 import { TikTokGlyph } from "@/components/icons/TikTokGlyph";
 import { Logo } from "@/components/Logo";
@@ -15,8 +15,9 @@ import { cartCount, useCartHydrated, useCartStore } from "@/store/cart";
 
 const links = [
   { href: "/", label: "Inicio" },
-  { href: "/carta", label: "Nuestra carta" },
-  { href: "/#nosotros", label: "Nosotros" },
+  { href: "/carta", label: "Carta" },
+  { href: "/nosotros", label: "Nosotros" },
+  { href: "/cuenta", label: "Sellos" },
   { href: "/contacto", label: "Contacto" },
 ];
 
@@ -30,7 +31,6 @@ export function Header() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [raised, setRaised] = useState(false);
-  const [tone, setTone] = useState<"light" | "dark">("light");
   const menuRef = useRef<HTMLDivElement>(null);
   const hydrated = useCartHydrated();
   const count = useCartStore((state) => cartCount(state.items));
@@ -41,143 +41,113 @@ export function Header() {
   useFocusTrap(menuOpen, menuRef, closeMenu);
 
   useEffect(() => {
-    const frame = { id: 0 };
-    const update = () => {
-      const nextRaised = window.scrollY > 8;
-      const probeY = 8 + Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--header-h")) * 16 + 16;
-      const el = document.elementFromPoint(48, Number.isFinite(probeY) ? probeY : 96);
-      const surface = el?.closest("[data-surface]")?.getAttribute("data-surface");
-      const nextTone = surface === "dark" ? "dark" : "light";
-      setRaised((current) => (current === nextRaised ? current : nextRaised));
-      setTone((current) => (current === nextTone ? current : nextTone));
-    };
-    const onScroll = () => {
-      cancelAnimationFrame(frame.id);
-      frame.id = requestAnimationFrame(update);
-    };
+    const onScroll = () => setRaised(window.scrollY > 8);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    return () => {
-      cancelAnimationFrame(frame.id);
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-    };
+    return () => window.removeEventListener("scroll", onScroll);
   }, [pathname]);
 
-  const overlay = pathname === "/" && !raised && !menuOpen;
-  const dark = !overlay && !menuOpen && tone === "dark";
-  const ink = dark ? "avena" : "savia";
-
   return (
-    <header
-      className={cn(
-        "fixed inset-x-0 top-0 z-40 h-[var(--header-h)] motion-reduce:transition-none",
-        overlay && "bg-transparent text-tinta",
-        !overlay && !dark && "bg-avena/88 text-tinta shadow-[0_8px_24px_rgba(31,51,25,0.06)] backdrop-blur-md",
-        dark && "bg-savia/90 text-avena shadow-[0_8px_24px_rgba(0,0,0,0.2)] backdrop-blur-md",
-      )}
-    >
-      <div className="mx-auto flex h-full w-full items-center justify-between gap-2 px-4 sm:px-6 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:px-10">
-        <Logo tone={ink} onClick={closeMenu} className="lg:justify-self-start" />
+    <header className="fixed inset-x-0 top-0 z-40">
+      <div
+        className={cn(
+          "border-b transition-[background,box-shadow,border-color] duration-300",
+          raised || menuOpen
+            ? "border-savia/10 bg-avena/95 shadow-[0_10px_28px_rgba(26,42,22,0.08)] backdrop-blur-md"
+            : "border-transparent bg-avena",
+        )}
+      >
+        <div className="mx-auto flex h-[var(--header-h)] max-w-[1400px] items-center justify-between gap-2 px-3 sm:gap-4 sm:px-5 lg:px-6">
+          <Logo
+            tone="savia"
+            onClick={closeMenu}
+            className="min-w-0 shrink"
+            imageClassName="!h-10 sm:!h-14 lg:!h-[3.75rem]"
+          />
 
-        <nav className="hidden items-center gap-1 lg:flex lg:justify-self-center" aria-label="Principal">
-          {links.map((link) => {
-            const current = isCurrent(pathname, link.href);
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                aria-current={current ? "page" : undefined}
-                className="inline-flex min-h-11 items-center px-3 text-base"
-              >
-                <span className="relative">
+          <nav
+            className="hidden items-center gap-0.5 rounded-full bg-white/80 p-1.5 ring-1 ring-savia/8 lg:flex"
+            aria-label="Principal"
+          >
+            {links.map((link) => {
+              const current = isCurrent(pathname, link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  aria-current={current ? "page" : undefined}
+                  className={cn(
+                    "inline-flex min-h-10 items-center rounded-full px-4 text-[0.95rem] transition-colors",
+                    current
+                      ? "bg-savia font-medium text-avena"
+                      : "text-tinta/55 hover:bg-salvia/70 hover:text-savia",
+                  )}
+                >
                   {link.label}
-                  <span
-                    aria-hidden="true"
-                    className={cn(
-                      "absolute -bottom-1 left-0 right-0 h-px",
-                      dark ? "bg-avena" : "bg-hoja",
-                      !current && "opacity-0",
-                    )}
-                  />
-                </span>
-              </Link>
-            );
-          })}
-        </nav>
+                </Link>
+              );
+            })}
+          </nav>
 
-        <div className="flex items-center lg:justify-self-end">
-          <a
-            href={site.instagramUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Instagram de Roots Protein Bar"
-            className="hidden h-11 w-11 items-center justify-center rounded-full sm:inline-flex"
-          >
-            <InstagramGlyph className="h-5 w-5" />
-          </a>
-          <a
-            href={site.tiktokUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="TikTok de Roots Protein Bar"
-            className="hidden h-11 w-11 items-center justify-center rounded-full sm:inline-flex"
-          >
-            <TikTokGlyph className="h-5 w-5" />
-          </a>
-          <Link
-            href="/carta#buscar"
-            aria-label="Buscar en la carta"
-            className="inline-flex h-11 w-11 items-center justify-center rounded-full"
-            onClick={(event) => {
-              closeMenu();
-              if (pathname === "/carta") {
-                event.preventDefault();
-                document.getElementById("buscar")?.focus();
-              }
-            }}
-          >
-            <Search aria-hidden="true" className="h-5 w-5" strokeWidth={1.5} />
-          </Link>
-          <button
-            type="button"
-            className="relative inline-flex h-11 w-11 items-center justify-center rounded-full"
-            aria-label="Abrir pedido"
-            onClick={() => {
-              closeMenu();
-              openCart();
-            }}
-          >
-            <ShoppingBag aria-hidden="true" className="h-5 w-5" strokeWidth={1.5} />
-            {hydrated && count > 0 ? (
-              <span className="absolute right-0.5 top-0.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-hoja px-1 text-[0.875rem] leading-none text-white">
-                {count > 9 ? "9+" : count}
-              </span>
-            ) : null}
-            {hydrated && pulse > 0 ? (
-              <Hojas key={pulse} className="sprout-leaf pointer-events-none absolute -right-1 -top-2 h-4 w-7 text-hoja" />
-            ) : null}
-          </button>
-          <p className="sr-only" aria-live="polite">
-            {hydrated ? `${count} ${count === 1 ? "producto" : "productos"} en el pedido` : ""}
-          </p>
-          <button
-            type="button"
-            className="inline-flex h-11 w-11 items-center justify-center rounded-full lg:hidden"
-            aria-expanded={menuOpen}
-            aria-controls="menu-movil"
-            aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
-            onClick={() => setMenuOpen((open) => !open)}
-          >
-            {menuOpen ? <X aria-hidden="true" strokeWidth={1.5} /> : <Menu aria-hidden="true" strokeWidth={1.5} />}
-          </button>
+          <div className="flex items-center gap-1 sm:gap-1.5">
+            <a
+              href={site.instagramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram de Roots Protein Bar"
+              className="hidden h-11 w-11 items-center justify-center rounded-full transition-colors hover:bg-white sm:inline-flex"
+            >
+              <InstagramGlyph className="h-6 w-6" />
+            </a>
+            <a
+              href={site.tiktokUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="TikTok de Roots Protein Bar"
+              className="hidden h-11 w-11 items-center justify-center rounded-full text-savia transition-colors hover:bg-white sm:inline-flex"
+            >
+              <TikTokGlyph className="h-6 w-6" />
+            </a>
+            <button
+              type="button"
+              className="relative ml-0.5 inline-flex h-11 items-center justify-center gap-2 rounded-full bg-savia px-3.5 text-avena transition-colors hover:bg-hoja sm:px-4"
+              aria-label="Abrir pedido"
+              onClick={() => {
+                closeMenu();
+                openCart();
+              }}
+            >
+              <ShoppingBag aria-hidden="true" className="h-5 w-5" strokeWidth={1.5} />
+              <span className="hidden text-sm font-medium sm:inline">Pedido</span>
+              {hydrated && count > 0 ? (
+                <span className="absolute -right-1 -top-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-hoja px-1 text-[0.75rem] leading-none text-white sm:static sm:ml-0.5 sm:h-5 sm:min-w-5">
+                  {count > 9 ? "9+" : count}
+                </span>
+              ) : null}
+              {hydrated && pulse > 0 ? (
+                <Hojas key={pulse} className="sprout-leaf pointer-events-none absolute -right-1 -top-2 h-4 w-7 text-hoja" />
+              ) : null}
+            </button>
+            <p className="sr-only" aria-live="polite">
+              {hydrated ? `${count} ${count === 1 ? "producto" : "productos"} en el pedido` : ""}
+            </p>
+            <button
+              type="button"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full text-savia transition-colors hover:bg-white lg:hidden"
+              aria-expanded={menuOpen}
+              aria-controls="menu-movil"
+              aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
+              onClick={() => setMenuOpen((open) => !open)}
+            >
+              {menuOpen ? <X aria-hidden="true" strokeWidth={1.5} /> : <Menu aria-hidden="true" strokeWidth={1.5} />}
+            </button>
+          </div>
         </div>
       </div>
 
       {menuOpen ? (
-        <div className="fixed inset-x-0 bottom-0 top-[var(--header-h)] z-50 lg:hidden" onClick={closeMenu}>
-          <div className="absolute inset-0 bg-savia/40" />
+        <div className="absolute inset-x-0 top-[var(--header-h)] z-50 lg:hidden">
+          <div className="absolute inset-0 -z-10 min-h-[100svh] bg-savia/25" onClick={closeMenu} />
           <div
             ref={menuRef}
             id="menu-movil"
@@ -185,10 +155,9 @@ export function Header() {
             aria-modal="true"
             aria-label="Menú"
             tabIndex={-1}
-            className="relative border-t border-hoja/20 bg-avena px-4 py-4 text-tinta outline-none"
-            onClick={(event) => event.stopPropagation()}
+            className="border-b border-savia/10 bg-avena px-3 py-3 text-tinta shadow-[0_16px_40px_rgba(26,42,22,0.12)] outline-none sm:px-4"
           >
-            <nav className="flex flex-col" aria-label="Principal móvil">
+            <nav className="mx-auto flex max-w-[1400px] flex-col gap-0.5" aria-label="Principal móvil">
               {links.map((link) => {
                 const current = isCurrent(pathname, link.href);
                 return (
@@ -197,8 +166,8 @@ export function Header() {
                     href={link.href}
                     aria-current={current ? "page" : undefined}
                     className={cn(
-                      "flex min-h-12 items-center rounded-full px-3 text-base",
-                      current && "bg-salvia",
+                      "flex min-h-12 items-center rounded-xl px-4 text-base",
+                      current ? "bg-savia text-avena" : "hover:bg-white/80",
                     )}
                     onClick={closeMenu}
                   >
@@ -207,23 +176,23 @@ export function Header() {
                 );
               })}
             </nav>
-            <div className="mt-3 flex flex-col border-t border-hoja/15 pt-3">
+            <div className="mx-auto mt-2 flex max-w-[1400px] flex-col border-t border-savia/10 pt-2">
               <a
                 href={site.instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex min-h-12 items-center gap-3 rounded-full px-3"
+                className="inline-flex min-h-12 items-center gap-3 rounded-xl px-4"
               >
-                <InstagramGlyph className="h-5 w-5" />
+                <InstagramGlyph className="h-6 w-6" />
                 Instagram
               </a>
               <a
                 href={site.tiktokUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex min-h-12 items-center gap-3 rounded-full px-3"
+                className="inline-flex min-h-12 items-center gap-3 rounded-xl px-4 text-savia"
               >
-                <TikTokGlyph className="h-5 w-5" />
+                <TikTokGlyph className="h-6 w-6" />
                 TikTok
               </a>
             </div>

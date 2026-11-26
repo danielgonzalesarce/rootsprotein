@@ -1,9 +1,8 @@
 import Image from "next/image";
-import { ArchFrame } from "@/components/ArchFrame";
 import { ImagePlaceholder } from "@/components/ImagePlaceholder";
-import { productImage } from "@/data/images";
 import type { Product } from "@/data/menu";
 import { cn } from "@/lib/cn";
+import { resolveProductMedia } from "@/lib/product-media";
 
 export function ProductVisual({
   product,
@@ -18,23 +17,22 @@ export function ProductVisual({
   priority?: boolean;
   label?: boolean;
 }) {
-  const image = product.image ? { src: product.image, alt: `${product.name} de Roots Protein Bar` } : productImage(product.id);
+  const image = resolveProductMedia(product);
+
   if (!image) {
-    return (
-      <ImagePlaceholder label={label ? product.name : undefined} className={className} />
-    );
+    return <ImagePlaceholder label={label ? product.name : undefined} className={className} />;
   }
 
   return (
-    <ArchFrame className={cn("relative", className)}>
+    <div className={cn("relative overflow-hidden bg-savia", className)}>
       <Image
         src={image.src}
         alt={image.alt}
         fill
         priority={priority}
         sizes={sizes}
-        className="object-cover"
+        className={cn("object-cover", !image.isProductPhoto && "opacity-85 saturate-[0.92]")}
       />
-    </ArchFrame>
+    </div>
   );
 }

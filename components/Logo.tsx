@@ -5,11 +5,13 @@ import { cn } from "@/lib/cn";
 export function Logo({
   tone = "savia",
   className,
+  imageClassName,
   onClick,
 }: {
   tone?: "savia" | "avena";
   compact?: boolean;
   className?: string;
+  imageClassName?: string;
   onClick?: () => void;
 }) {
   return (
@@ -20,7 +22,11 @@ export function Logo({
         width={735}
         height={339}
         priority={tone === "savia"}
-        className={cn("h-11 w-auto sm:h-12 lg:h-14", tone === "avena" && "brightness-0 invert")}
+        className={cn(
+          "h-10 w-auto sm:h-11 lg:h-12",
+          tone === "avena" && "brightness-0 invert",
+          imageClassName,
+        )}
       />
     </Link>
   );

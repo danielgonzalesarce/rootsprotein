@@ -1,24 +1,36 @@
 "use client";
 
-import Link from "next/link";
+import { useEffect } from "react";
+import { Button } from "@/components/ui/Button";
+import { StatusPage } from "@/components/system/StatusPage";
+import { infoWhatsAppUrl } from "@/lib/whatsapp";
 
-export default function ErrorPage({ retry }: { error: unknown; retry: () => void }) {
+export default function ErrorPage({
+  error,
+  retry,
+}: {
+  error: unknown;
+  retry: () => void;
+}) {
+  useEffect(() => {
+    console.error(error);
+  }, [error]);
+
   return (
-    <main id="contenido" className="bg-avena px-5 pb-24 pt-[calc(var(--header-h)+3rem)] text-tinta" data-surface="light">
-      <h1 className="chapter-title text-savia">Algo no cargó</h1>
-      <p className="mt-4 max-w-[62ch]">Puedes intentar de nuevo o volver al inicio.</p>
-      <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-        <button
-          type="button"
-          className="inline-flex min-h-11 items-center justify-center rounded-full bg-savia px-5 text-avena"
-          onClick={() => retry()}
-        >
-          Intentar de nuevo
-        </button>
-        <Link href="/" className="inline-flex min-h-11 items-center justify-center rounded-full border border-hoja px-5 text-savia">
-          Ir al inicio
-        </Link>
-      </div>
-    </main>
+    <StatusPage
+      eyebrow="Error"
+      title="Algo no cargó bien"
+      description="Hubo un problema al mostrar esta página. Intenta de nuevo o vuelve al inicio."
+    >
+      <Button type="button" onClick={() => retry()}>
+        Intentar de nuevo
+      </Button>
+      <Button href="/" variant="line">
+        Ir al inicio
+      </Button>
+      <Button href={infoWhatsAppUrl()} variant="line">
+        Pedir por WhatsApp
+      </Button>
+    </StatusPage>
   );
 }

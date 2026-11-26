@@ -1,6 +1,6 @@
 # Roots Protein Bar
 
-Sitio de Roots Protein Bar (Santa Anita). Next.js, sin backend: la carta vive en código y el pedido sale por WhatsApp.
+Sitio de Roots Protein Bar (Santa Anita). Next.js: la carta vive en código, el pedido sale por WhatsApp y Raíces Roots (sellos) usa APIs propias.
 
 ## Comandos
 
@@ -28,7 +28,17 @@ Copia `.env.example`.
 
 - `NEXT_PUBLIC_SITE_URL`: dominio final, sin barra al final. En local puede quedar `http://localhost:3000`.
 - `NEXT_PUBLIC_GA_ID`: ID de GA4. Si está vacío, no se carga analítica.
+- `LOYALTY_SECRET` / `LOYALTY_QR_SECRET`: claves para sesión y QR rotativos.
+- `LOCAL_QR_PASSWORD`: clave de `/local/qr` (celular del local).
+- `DATABASE_URL`: connection string de Neon. Si falta, en local se usa `.data/loyalty.json`.
+
+## Raíces Roots (sellos)
+
+1. Cliente: `/cuenta` — registro con WhatsApp + PIN y ver sellos.
+2. Local: `/local/qr` — mostrar QR de sello o de canje (se renueva cada 15 min).
+3. Escaneos: `/sello` y `/canje`.
+4. Base de datos: el proyecto está linkeado con Neon (`neon.ts` + `.neon`). Corre `neon deploy` para refrescar env vars y `node --env-file=.env.local scripts/migrate-loyalty.mjs` para crear las tablas.
 
 ## Vercel
 
-Importa el repositorio en Vercel. En el proyecto define `NEXT_PUBLIC_SITE_URL` con el dominio final y `NEXT_PUBLIC_GA_ID` si vas a medir. El framework es Next.js; el comando de build es `npm run build`.
+Importa el repositorio en Vercel. Define `NEXT_PUBLIC_SITE_URL`, secretos de fidelización y, si aplica, Supabase y `NEXT_PUBLIC_GA_ID`. El framework es Next.js; el comando de build es `npm run build`.

@@ -10,7 +10,7 @@ export const site = {
   city: "Lima",
   instagramUrl: "https://www.instagram.com/rootsprotein/",
   tiktokUrl: "https://www.tiktok.com/@rootsprotein", // TODO(dueña): confirmar la URL de TikTok
-  mapsUrl: "https://g.co/kgs/3M1UEpF", // TODO: verificar el enlace de Google Maps
+  mapsUrl: "https://maps.app.goo.gl/G9ErwzXqhfJd8sqC7",
   hours: "Lunes a domingo, 8:30 a. m. a 10:00 p. m.", // TODO(dueña): confirmar. Instagram dice 8:30–22:00 y TikTok dice 12:00–23:00
   opensAt: "08:30",
   closesAt: "22:00",
