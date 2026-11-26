@@ -9,7 +9,7 @@ import { infoWhatsAppUrl } from "@/lib/whatsapp";
 import { useCartStore } from "@/store/cart";
 
 const VISIBLE_MS = 4500;
-const CYCLE_MS = 15_000;
+const CYCLE_MS = 20_000;
 
 export function FloatingWhatsApp() {
   const cartOpen = useCartStore((state) => state.isOpen);
