@@ -49,4 +49,4 @@ Copia `.env.example` → `.env.local` (este archivo **no** se sube a Git).
 
 ## Vercel
 
-Importa el repositorio en Vercel. Define `NEXT_PUBLIC_SITE_URL`, secretos de fidelización y, si aplica, Supabase y `NEXT_PUBLIC_GA_ID`. El framework es Next.js; el comando de build es `npm run build`.
+Importa el repositorio en Vercel. Define `NEXT_PUBLIC_SITE_URL`, secretos de fidelización, **`DATABASE_URL`** (Neon, la misma de `.env.local`) y, si aplica, `NEXT_PUBLIC_GA_ID`. Sin `DATABASE_URL` en Production, crear cuenta / sellos falla. El framework es Next.js; el comando de build es `npm run build`.

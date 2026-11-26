@@ -17,8 +17,26 @@ export type StoredReview = {
 
 type StoreData = { reviews: StoredReview[] };
 
+function isServerlessRuntime(): boolean {
+  return Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
+}
+
+function resolveDatabaseUrl(): string | null {
+  for (const value of [
+    process.env.DATABASE_URL,
+    process.env.DATABASE_URL_UNPOOLED,
+    process.env.POSTGRES_URL,
+    process.env.POSTGRES_PRISMA_URL,
+  ]) {
+    const trimmed = value?.trim();
+    if (trimmed) return trimmed;
+  }
+  return null;
+}
+
 function localPath() {
-  return path.join(process.cwd(), ".data", "site-reviews.json");
+  const root = isServerlessRuntime() ? "/tmp" : process.cwd();
+  return path.join(root, ".data", "site-reviews.json");
 }
 
 async function readLocal(): Promise<StoreData> {
@@ -32,13 +50,16 @@ async function readLocal(): Promise<StoreData> {
 }
 
 async function writeLocal(data: StoreData) {
+  if (isServerlessRuntime() && !resolveDatabaseUrl()) {
+    throw new Error("Falta DATABASE_URL en Vercel para guardar reseñas.");
+  }
   const file = localPath();
   await fs.mkdir(path.dirname(file), { recursive: true });
   await fs.writeFile(file, JSON.stringify(data, null, 2), "utf8");
 }
 
 function getSql() {
-  const url = process.env.DATABASE_URL?.trim();
+  const url = resolveDatabaseUrl();
   if (!url) return null;
   return neon(url);
 }

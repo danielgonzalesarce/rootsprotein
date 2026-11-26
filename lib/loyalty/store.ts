@@ -20,8 +20,30 @@ type Sql = NeonQueryFunction<false, false>;
 
 const emptyStore = (): StoreData => ({ customers: [], stamps: [], redemptions: [] });
 
+function isServerlessRuntime(): boolean {
+  return Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
+}
+
+/** En Vercel/Neon pueden venir con distintos nombres. */
+function resolveDatabaseUrl(): string | null {
+  const candidates = [
+    process.env.DATABASE_URL,
+    process.env.DATABASE_URL_UNPOOLED,
+    process.env.POSTGRES_URL,
+    process.env.POSTGRES_PRISMA_URL,
+    process.env.NEON_DATABASE_URL,
+  ];
+  for (const value of candidates) {
+    const trimmed = value?.trim();
+    if (trimmed) return trimmed;
+  }
+  return null;
+}
+
 function localPath(): string {
-  return path.join(process.cwd(), ".data", "loyalty.json");
+  // En serverless el cwd no es escribible; el fallback local solo aplica fuera de Vercel.
+  const root = isServerlessRuntime() ? "/tmp" : process.cwd();
+  return path.join(root, ".data", "loyalty.json");
 }
 
 async function readLocal(): Promise<StoreData> {
@@ -39,19 +61,32 @@ async function readLocal(): Promise<StoreData> {
 }
 
 async function writeLocal(data: StoreData): Promise<void> {
+  if (isServerlessRuntime() && !resolveDatabaseUrl()) {
+    throw new Error(
+      "Falta DATABASE_URL en Vercel. Conecta Neon (o pega la connection string) y vuelve a desplegar.",
+    );
+  }
   const file = localPath();
   await fs.mkdir(path.dirname(file), { recursive: true });
   await fs.writeFile(file, JSON.stringify(data, null, 2), "utf8");
 }
 
 function getSql(): Sql | null {
-  const url = process.env.DATABASE_URL?.trim();
+  const url = resolveDatabaseUrl();
   if (!url) return null;
   return neon(url);
 }
 
 function useNeon(): boolean {
-  return Boolean(process.env.DATABASE_URL?.trim());
+  return Boolean(resolveDatabaseUrl());
+}
+
+function requireNeonInProduction(): void {
+  if (isServerlessRuntime() && !resolveDatabaseUrl()) {
+    throw new Error(
+      "Falta DATABASE_URL en Vercel. Conecta Neon (o pega la connection string) y vuelve a desplegar.",
+    );
+  }
 }
 
 function asIso(value: unknown): string {
@@ -60,6 +95,7 @@ function asIso(value: unknown): string {
 }
 
 export async function findCustomerByPhone(phone: string): Promise<LoyaltyCustomer | null> {
+  requireNeonInProduction();
   const sql = getSql();
   if (sql && useNeon()) {
     const rows = await sql`
@@ -76,6 +112,7 @@ export async function findCustomerByPhone(phone: string): Promise<LoyaltyCustome
 }
 
 export async function findCustomerById(id: string): Promise<LoyaltyCustomer | null> {
+  requireNeonInProduction();
   const sql = getSql();
   if (sql && useNeon()) {
     const rows = await sql`
@@ -96,6 +133,7 @@ export async function createCustomer(input: {
   name: string;
   pinHash: string;
 }): Promise<LoyaltyCustomer> {
+  requireNeonInProduction();
   const customer: LoyaltyCustomer = {
     id: randomUUID(),
     phone: input.phone,
@@ -131,6 +169,7 @@ export async function createCustomer(input: {
 }
 
 export async function listStamps(customerId: string): Promise<LoyaltyStamp[]> {
+  requireNeonInProduction();
   const sql = getSql();
   if (sql && useNeon()) {
     const rows = await sql`
@@ -148,6 +187,7 @@ export async function listStamps(customerId: string): Promise<LoyaltyStamp[]> {
 }
 
 export async function listRedemptions(customerId: string): Promise<LoyaltyRedemption[]> {
+  requireNeonInProduction();
   const sql = getSql();
   if (sql && useNeon()) {
     const rows = await sql`
@@ -177,6 +217,7 @@ export async function getLastStampAt(customerId: string): Promise<string | null>
 }
 
 export async function addStamp(customerId: string): Promise<LoyaltyStamp> {
+  requireNeonInProduction();
   const stamp: LoyaltyStamp = {
     id: randomUUID(),
     customerId,
@@ -200,6 +241,7 @@ export async function addStamp(customerId: string): Promise<LoyaltyStamp> {
 }
 
 export async function addRedemption(customerId: string): Promise<LoyaltyRedemption> {
+  requireNeonInProduction();
   const redemption: LoyaltyRedemption = {
     id: randomUUID(),
     customerId,
