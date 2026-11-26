@@ -129,7 +129,8 @@ body {
   .sheet-in,
   .sprout-leaf,
   .stamp-root-pop,
-  .stamp-bounce {
+  .stamp-bounce,
+  .wa-fab-pulse {
     animation: none !important;
     transition: none !important;
   }
@@ -174,6 +175,10 @@ body {
   .menu-link-in {
     animation: menu-link-in 0.5s cubic-bezier(0.2, 0.75, 0.2, 1) both;
     animation-delay: calc(0.08s + var(--menu-i, 0) * 0.05s);
+  }
+
+  .wa-fab-pulse {
+    animation: wa-fab-pulse 2.4s ease-out infinite;
   }
 
   .sprout-leaf {
@@ -298,6 +303,23 @@ body {
   to {
     opacity: 1;
     transform: none;
+  }
+}
+
+@keyframes wa-fab-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+
+  70% {
+    transform: scale(1.55);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1.55);
+    opacity: 0;
   }
 }
 
