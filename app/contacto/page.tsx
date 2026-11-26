@@ -108,6 +108,11 @@ export default function ContactoPage() {
               <MapPin aria-hidden="true" className="h-5 w-5" strokeWidth={1.5} />
               Cómo llegar
             </Button>
+            {site.googleReviewUrl ? (
+              <Button href={site.googleReviewUrl} variant="line" event="click_google_review">
+                Dejar reseña en Google
+              </Button>
+            ) : null}
           </div>
 
           <div className="flex flex-wrap gap-3 sm:col-span-2">

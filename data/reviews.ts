@@ -5,7 +5,11 @@ export type Review = {
   rating: 5 | 4;
 };
 
-/** Reseñas públicas de Google Maps */
+/**
+ * Reseñas destacadas en la web (copiadas de Google Maps).
+ * Cuando un cliente deja una reseña nueva en Google, aparece primero en Maps;
+ * súbela aquí para mostrarla también en la página del local.
+ */
 export const reviews: Review[] = [
   {
     id: "r1",

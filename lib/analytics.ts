@@ -6,6 +6,7 @@ export type AnalyticsEvent =
   | "click_whatsapp"
   | "click_como_llegar"
   | "click_llamar"
+  | "click_google_review"
   | "add_to_cart"
   | "send_order";
 

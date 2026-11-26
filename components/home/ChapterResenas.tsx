@@ -1,5 +1,6 @@
 import { Star } from "lucide-react";
 import { Chapter } from "@/components/home/Chapter";
+import { GoogleReviewInvite } from "@/components/home/GoogleReviewInvite";
 import { ResenasQuotes } from "@/components/home/ResenasQuotes";
 import { Button } from "@/components/ui/Button";
 import { SectionTitle } from "@/components/ui/SectionTitle";
@@ -20,17 +21,26 @@ export function ChapterResenas() {
               ))}
             </span>
             <span className="font-medium text-savia">5.0</span>
-            <span>· Reseñas reales</span>
+            <span>· Reseñas en Google Maps</span>
           </p>
         </div>
-        {site.mapsUrl ? (
-          <Button href={site.mapsUrl} variant="line">
-            Ver en Google Maps
-          </Button>
-        ) : null}
+        <div className="flex flex-wrap gap-3">
+          {site.googleReviewUrl ? (
+            <Button href={site.googleReviewUrl} event="click_google_review" target="_blank" rel="noopener noreferrer">
+              Dejar reseña
+            </Button>
+          ) : null}
+          {site.mapsUrl ? (
+            <Button href={site.mapsUrl} variant="line" target="_blank" rel="noopener noreferrer">
+              Ver en Google Maps
+            </Button>
+          ) : null}
+        </div>
       </div>
 
       <ResenasQuotes reviews={reviews} />
+
+      <GoogleReviewInvite className="mt-10 sm:mt-12" />
     </Chapter>
   );
 }

@@ -1,0 +1,13 @@
+---
+description: Versionar el proyecto con git en cada entrega relevante
+alwaysApply: true
+---
+
+# Versionado del proyecto
+
+- Trabajar siempre con **git versionado**: no dejar entregas grandes solo en local.
+- Tras un bloque de trabajo usable (feature, fix de deploy, rediseño), **commit + push** a `origin` sin esperar a que lo pidan otra vez.
+- Mensajes de commit claros en inglés o español, enfocados en el *por qué*.
+- Subir `package.json` `version` en cambios de producto notables (p. ej. `0.1.0` → `0.2.0`).
+- No commitear secretos (`.env.local`, claves). Sí `.env.example`.
+- Preferir commits atómicos por tema cuando el diff sea grande (UI, loyalty, reseñas, etc.).

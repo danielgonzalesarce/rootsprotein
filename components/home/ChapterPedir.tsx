@@ -33,10 +33,10 @@ export function ChapterPedir() {
         </Button>
       </div>
       {site.googleReviewUrl ? (
-        <div className="mt-10">
-          <p className="text-avena/80">¿Ya nos visitaste? Déjanos tu reseña en Google.</p>
+        <div className="mt-10 border-t border-avena/12 pt-8">
+          <p className="text-avena/80">¿Ya nos visitaste? Tu reseña se publica en Google Maps.</p>
           <div className="mt-4">
-            <Button href={site.googleReviewUrl} variant="line" surface="dark">
+            <Button href={site.googleReviewUrl} variant="line" surface="dark" event="click_google_review">
               Dejar una reseña
             </Button>
           </div>
