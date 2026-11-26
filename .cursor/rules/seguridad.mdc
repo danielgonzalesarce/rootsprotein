@@ -1,0 +1,13 @@
+---
+description: Endurecer seguridad en APIs, secretos y datos privados
+alwaysApply: true
+---
+
+# Seguridad Roots Protein
+
+- Nunca committear `.env.local`, claves, dumps de clientes o `.data/`.
+- En producción, `LOYALTY_SECRET`, `LOYALTY_QR_SECRET` y `LOCAL_QR_PASSWORD` deben ser fuertes (Vercel env).
+- APIs mutables: JSON `Content-Type`, rate limit, sanitizar texto de usuario.
+- No usar `dangerouslySetInnerHTML` con input de usuarios.
+- Nuevas rutas `/api/*`: validar body, no confiar en headers de host sin allowlist.
+- Al publicar: revisar que no se filtren secretos en logs ni en el cliente (`NEXT_PUBLIC_*` solo para datos públicos).

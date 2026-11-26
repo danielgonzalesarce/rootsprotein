@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { loyalty } from "@/data/loyalty";
+import { loyaltyQrSecret } from "@/lib/security/secrets";
 
 export type QrKind = "stamp" | "redeem";
 
@@ -9,12 +10,7 @@ type TokenPayload = {
 };
 
 function secret(): string {
-  const value = process.env.LOYALTY_QR_SECRET ?? process.env.LOYALTY_SECRET;
-  if (!value) {
-    // Solo para desarrollo local sin .env; en producción debe configurarse.
-    return "roots-dev-qr-secret-change-me";
-  }
-  return value;
+  return loyaltyQrSecret();
 }
 
 function encode(payload: TokenPayload): string {

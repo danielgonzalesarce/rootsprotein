@@ -1,3 +1,4 @@
+import { timingSafeEqual } from "node:crypto";
 import { loyalty } from "@/data/loyalty";
 import { isWithinServiceHours } from "@/lib/loyalty/hours";
 import { hashPin, isValidPin, verifyPin } from "@/lib/loyalty/pin";
@@ -12,6 +13,8 @@ import {
   getLastStampAt,
 } from "@/lib/loyalty/store";
 import { verifyQrToken } from "@/lib/loyalty/tokens";
+import { sanitizePlainText } from "@/lib/security/sanitize";
+import { localQrPassword } from "@/lib/security/secrets";
 
 export type AccountView = {
   name: string;
@@ -28,7 +31,7 @@ export async function registerCustomer(input: {
   phone: string;
   pin: string;
 }): Promise<{ ok: true; customerId: string; name: string; phone: string } | { ok: false; error: string }> {
-  const name = input.name.trim();
+  const name = sanitizePlainText(input.name, 60);
   if (name.length < 2) return { ok: false, error: "Escribe tu nombre." };
   const phone = normalizePhone(input.phone);
   if (!phone) return { ok: false, error: "Escribe un WhatsApp válido (9 dígitos)." };
@@ -126,6 +129,13 @@ export async function applyRedeem(input: {
 }
 
 export function checkLocalPassword(password: string): boolean {
-  const expected = process.env.LOCAL_QR_PASSWORD ?? "roots-local";
-  return password === expected;
+  const expected = localQrPassword();
+  const left = Buffer.from(password);
+  const right = Buffer.from(expected);
+  if (left.length !== right.length) return false;
+  try {
+    return timingSafeEqual(left, right);
+  } catch {
+    return false;
+  }
 }

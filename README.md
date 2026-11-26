@@ -24,13 +24,19 @@ Coloca las del local en `public/images/local/` y las de productos en `public/ima
 
 ## Variables de entorno
 
-Copia `.env.example`.
+Copia `.env.example` → `.env.local` (este archivo **no** se sube a Git).
 
 - `NEXT_PUBLIC_SITE_URL`: dominio final, sin barra al final. En local puede quedar `http://localhost:3000`.
 - `NEXT_PUBLIC_GA_ID`: ID de GA4. Si está vacío, no se carga analítica.
-- `LOYALTY_SECRET` / `LOYALTY_QR_SECRET`: claves para sesión y QR rotativos.
-- `LOCAL_QR_PASSWORD`: clave de `/local/qr` (celular del local).
+- `LOYALTY_SECRET` / `LOYALTY_QR_SECRET`: claves largas (≥16) para sesión y QR. **Obligatorias en producción.**
+- `LOCAL_QR_PASSWORD`: clave fuerte de `/local/qr`. **Obligatoria en producción.**
 - `DATABASE_URL`: connection string de Neon. Si falta, en local se usa `.data/loyalty.json`.
+
+## Seguridad
+
+- Headers CSP / HSTS, middleware anti-rutas sospechosas, rate limit en APIs.
+- Texto de usuarios sanitizado; reseñas del sitio quedan sin publicar hasta moderar (salvo `SITE_REVIEWS_AUTO_PUBLISH=true`).
+- En Vercel define secretos reales (no copies los valores de ejemplo).
 
 ## Raíces Roots (sellos)
 

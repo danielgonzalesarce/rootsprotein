@@ -4,7 +4,7 @@ create table if not exists site_reviews (
   name text not null,
   text text not null,
   rating int not null check (rating between 1 and 5),
-  published boolean not null default true,
+  published boolean not null default false,
   created_at timestamptz not null default now()
 );
 

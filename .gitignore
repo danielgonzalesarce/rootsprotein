@@ -23,7 +23,13 @@
 # misc
 .DS_Store
 *.pem
+*.p12
+*.key
+*.crt
 .data/
+.secrets/
+credentials*.json
+service-account*.json
 
 # debug
 npm-debug.log*
@@ -31,14 +37,24 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# env / private config (nunca subir secretos)
+.env
+.env.*
 !.env.example
+*.local
 
-# vercel
+# vercel / neon
 .vercel
+.neon
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-.neon
+
+# dumps / exports privados
+*.sql.bak
+*.dump
+customers*.csv
+customers*.json
+!db/**/*.sql
+!supabase/**/*.sql

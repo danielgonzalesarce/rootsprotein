@@ -1,6 +1,7 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { loyalty } from "@/data/loyalty";
+import { loyaltySessionSecret } from "@/lib/security/secrets";
 
 export type SessionPayload = {
   customerId: string;
@@ -9,8 +10,7 @@ export type SessionPayload = {
 };
 
 function secretKey(): Uint8Array {
-  const secret = process.env.LOYALTY_SECRET ?? "roots-dev-loyalty-secret-change-me";
-  return new TextEncoder().encode(secret);
+  return new TextEncoder().encode(loyaltySessionSecret());
 }
 
 export async function createSessionToken(payload: SessionPayload): Promise<string> {
