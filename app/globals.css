@@ -124,6 +124,7 @@ body {
   }
 
   .hero-line,
+  .hero-float,
   .sheet-in,
   .sprout-leaf,
   .stamp-root-pop,
@@ -158,6 +159,11 @@ body {
 
   .hero-line-2 {
     animation-delay: 0.14s;
+  }
+
+  .hero-float {
+    animation: hero-float 0.75s cubic-bezier(0.2, 0.75, 0.2, 1) both;
+    animation-delay: calc(0.22s + var(--hero-float-i, 0) * 0.1s);
   }
 
   .sheet-in {
@@ -242,6 +248,17 @@ body {
 
 .on-dark .stamp-mark--filled {
   filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.45));
+}
+
+@keyframes hero-float {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 @keyframes hero-line {

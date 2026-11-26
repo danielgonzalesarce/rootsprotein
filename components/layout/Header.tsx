@@ -47,26 +47,35 @@ export function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, [pathname]);
 
+  const homeStage = pathname === "/" && !raised && !menuOpen;
+
   return (
     <header className="fixed inset-x-0 top-0 z-40">
       <div
         className={cn(
           "border-b transition-[background,box-shadow,border-color] duration-300",
-          raised || menuOpen
-            ? "border-savia/10 bg-avena/95 shadow-[0_10px_28px_rgba(26,42,22,0.08)] backdrop-blur-md"
-            : "border-transparent bg-avena",
+          homeStage
+            ? "border-transparent bg-transparent"
+            : raised || menuOpen
+              ? "border-savia/10 bg-avena/95 shadow-[0_10px_28px_rgba(26,42,22,0.08)] backdrop-blur-md"
+              : "border-transparent bg-avena",
         )}
       >
         <div className="mx-auto flex h-[var(--header-h)] max-w-[1400px] items-center justify-between gap-2 px-3 sm:gap-4 sm:px-5 lg:px-6">
           <Logo
-            tone="savia"
+            tone={homeStage ? "avena" : "savia"}
             onClick={closeMenu}
             className="min-w-0 shrink"
             imageClassName="!h-10 sm:!h-14 lg:!h-[3.75rem]"
           />
 
           <nav
-            className="hidden items-center gap-0.5 rounded-full bg-white/80 p-1.5 ring-1 ring-savia/8 lg:flex"
+            className={cn(
+              "hidden items-center gap-0.5 rounded-full p-1.5 lg:flex",
+              homeStage
+                ? "bg-avena/12 ring-1 ring-avena/15 backdrop-blur-md"
+                : "bg-white/80 ring-1 ring-savia/8",
+            )}
             aria-label="Principal"
           >
             {links.map((link) => {
@@ -78,9 +87,13 @@ export function Header() {
                   aria-current={current ? "page" : undefined}
                   className={cn(
                     "inline-flex min-h-10 items-center rounded-full px-4 text-[0.95rem] transition-colors",
-                    current
-                      ? "bg-savia font-medium text-avena"
-                      : "text-tinta/55 hover:bg-salvia/70 hover:text-savia",
+                    homeStage
+                      ? current
+                        ? "bg-avena font-medium text-savia"
+                        : "text-avena/75 hover:bg-avena/15 hover:text-avena"
+                      : current
+                        ? "bg-savia font-medium text-avena"
+                        : "text-tinta/55 hover:bg-salvia/70 hover:text-savia",
                   )}
                 >
                   {link.label}
@@ -95,7 +108,10 @@ export function Header() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Instagram de Roots Protein Bar"
-              className="hidden h-11 w-11 items-center justify-center rounded-full transition-colors hover:bg-white sm:inline-flex"
+              className={cn(
+                "hidden h-11 w-11 items-center justify-center rounded-full transition-colors sm:inline-flex",
+                homeStage ? "text-avena hover:bg-avena/15" : "hover:bg-white",
+              )}
             >
               <InstagramGlyph className="h-6 w-6" />
             </a>
@@ -104,13 +120,21 @@ export function Header() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="TikTok de Roots Protein Bar"
-              className="hidden h-11 w-11 items-center justify-center rounded-full text-savia transition-colors hover:bg-white sm:inline-flex"
+              className={cn(
+                "hidden h-11 w-11 items-center justify-center rounded-full transition-colors sm:inline-flex",
+                homeStage ? "text-avena hover:bg-avena/15" : "text-savia hover:bg-white",
+              )}
             >
               <TikTokGlyph className="h-6 w-6" />
             </a>
             <button
               type="button"
-              className="relative ml-0.5 inline-flex h-11 items-center justify-center gap-2 rounded-full bg-savia px-3.5 text-avena transition-colors hover:bg-hoja sm:px-4"
+              className={cn(
+                "relative ml-0.5 inline-flex h-11 items-center justify-center gap-2 rounded-full px-3.5 transition-colors sm:px-4",
+                homeStage
+                  ? "bg-avena text-savia hover:bg-white"
+                  : "bg-savia text-avena hover:bg-hoja",
+              )}
               aria-label="Abrir pedido"
               onClick={() => {
                 closeMenu();
@@ -133,7 +157,10 @@ export function Header() {
             </p>
             <button
               type="button"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full text-savia transition-colors hover:bg-white lg:hidden"
+              className={cn(
+                "inline-flex h-11 w-11 items-center justify-center rounded-full transition-colors lg:hidden",
+                homeStage ? "text-avena hover:bg-avena/15" : "text-savia hover:bg-white",
+              )}
               aria-expanded={menuOpen}
               aria-controls="menu-movil"
               aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
